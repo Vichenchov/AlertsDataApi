@@ -16,8 +16,9 @@ app.use(cors());
 
 app.get("/Alerts", async (req, res) => {
     try {
-        const Alerts = await AlertModel.find();
-        res.json(Alerts);
+        const Alerts = await AlertModel.find().sort({ time : 1});
+        const alertsByHour = af.countByHours(Alerts);
+        res.json(alertsByHour);
     } catch (error) {
         console.error('Error fetching documents:', error);
         res.status(500).send('Internal Server Error');
@@ -93,7 +94,7 @@ const start = async () => {
                 dbName: 'PikudHaoref',
             }
         );
-        app.listen(port, () => console.log("Server started on port 3000"));
+        app.listen(port, () => console.log(`Server started on port ${port}`));
     } catch (error) {
         console.error(error);
         process.exit(1);
