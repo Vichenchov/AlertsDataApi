@@ -87,6 +87,40 @@ app.get('/Alerts/:city/byHour', async (req, res) => {
     }
 });
 
+app.get('/Alerts/:city/goodHour', async (req, res) => {
+    try {
+        const {
+            city
+        } = req.params;
+        const cityAlerts = await AlertModel.find({
+            city: city
+        }).sort({ time : 1});
+        const alertsByHour =  af.countByHours(cityAlerts);
+        const goodHour = af.goodHour(alertsByHour);
+        res.json(goodHour);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/Alerts/:city/badHour', async (req, res) => {
+    try {
+        const {
+            city
+        } = req.params;
+        const cityAlerts = await AlertModel.find({
+            city: city
+        }).sort({ time : 1});
+        const alertsByHour =  af.countByHours(cityAlerts);
+        const badHour = af.badHour(alertsByHour);
+        res.json(badHour);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 const start = async () => {
     try {
         await mongoose.connect(
