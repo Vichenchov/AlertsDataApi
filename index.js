@@ -16,7 +16,9 @@ app.use(cors());
 
 app.get("/Alerts", async (req, res) => {
     try {
-        const Alerts = await AlertModel.find().sort({ time : 1});
+        const Alerts = await AlertModel.find().sort({
+            time: 1
+        });
         const alertsByHour = af.countByHours(Alerts);
         res.json(alertsByHour);
     } catch (error) {
@@ -46,7 +48,7 @@ app.get('/Alerts/cities', async (req, res) => {
         const Alerts = await AlertModel.find();
         const cityNamesSet = new Set();
         Alerts.forEach(alert => {
-             cityNamesSet.add(alert.city);
+            cityNamesSet.add(alert.city);
         });
         const cityNamesArray = Array.from(cityNamesSet);
         res.json(cityNamesArray);
@@ -78,9 +80,36 @@ app.get('/Alerts/:city/byHour', async (req, res) => {
         } = req.params;
         const cityAlerts = await AlertModel.find({
             city: city
-        }).sort({ time : 1});
+        }).sort({
+            time: 1
+        });
         const alertsByHour = af.countByHours(cityAlerts);
         res.json(alertsByHour);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/Alerts/:city/byMin', async (req, res) => {
+    const {
+        city
+    } = req.params;
+    let cityAlerts = [];
+    try {
+        if (city !== 'ישראל') {
+             cityAlerts = await AlertModel.find({
+                city: city
+            }).sort({
+                time: 1
+            });
+        } else {
+             cityAlerts = await AlertModel.find().sort({
+                time: 1
+            });
+        }
+        const alertsByMin = af.countByMin(cityAlerts);
+        res.json(alertsByMin);
     } catch (error) {
         console.error('Error fetching documents:', error);
         res.status(500).send('Internal Server Error');
