@@ -37,7 +37,7 @@ exports.countByMin = (cityAlerts) => {
   let resultArray = []
   for (let i = 0; i < 60; i++) {
     resultArray.push({
-      time: '00:' + (i < 10 ? ('0' + i) : i),
+      time: i,
       count: minCountArray[i],
     })
   }
