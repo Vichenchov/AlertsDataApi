@@ -98,23 +98,50 @@ app.get('/Alerts/:city/byMin', async (req, res) => {
     let cityAlerts = [];
     try {
         if (city !== 'ישראל') {
-             cityAlerts = await AlertModel.find({
+            cityAlerts = await AlertModel.find({
                 city: city
             }).sort({
                 time: 1
             });
         } else {
-             cityAlerts = await AlertModel.find().sort({
+            cityAlerts = await AlertModel.find().sort({
                 time: 1
             });
         }
-        const alertsByMin = af.countByMin(cityAlerts);
+        const alertsByMin = af.countByMinutes(cityAlerts);
         res.json(alertsByMin);
     } catch (error) {
         console.error('Error fetching documents:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+app.get("/Alerts/:city/byDay", async (req, res) => {
+    const {
+        city
+    } = req.params;
+    let cityAlerts = [];
+    try {
+        if (city !== 'ישראל') {
+            cityAlerts = await AlertModel.find({
+                city: city
+            }).sort({
+                time: 1
+            });
+        } else {
+            cityAlerts = await AlertModel.find().sort({
+                time: 1
+            });
+        }
+        const alertsByDay = af.countAlertsPerDay(cityAlerts);
+        res.json(alertsByDay);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 
 const start = async () => {
     try {

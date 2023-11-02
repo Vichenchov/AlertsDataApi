@@ -1,4 +1,4 @@
-exports.countByHours = (cityAlerts) => {
+exports.countByHours = cityAlerts => {
   let hourCountArray = new Array(24).fill(0) // Initialize the array with 24 periods
 
   // Iterate through the sorted array and populate the hourCountArray
@@ -24,7 +24,7 @@ exports.countByHours = (cityAlerts) => {
   return resultArray
 }
 
-exports.countByMin = (cityAlerts) => {
+exports.countByMinutes = cityAlerts => {
   let minCountArray = new Array(60).fill(0)
 
   cityAlerts.forEach((alert) => {
@@ -42,4 +42,37 @@ exports.countByMin = (cityAlerts) => {
     })
   }
   return resultArray
+}
+
+exports.countAlertsPerDay = cityAlerts => {
+  let dayDate = cityAlerts[0].time;
+  let countAM = 0;
+  let countPM = 0;
+  const alertsPerDayArray = [];
+
+  cityAlerts.forEach(alert => {
+    let currentAlertDay = alert.time;
+    if (areDatesDifferent(currentAlertDay, dayDate)) {
+      alertsPerDayArray.push({
+        date: dayDate.getDate() +'/' + dayDate.getMonth(),
+        amCount: countAM,
+        pmCount: countPM,
+        total: countAM + countPM
+      });
+      dayDate = currentAlertDay;
+      countAM = 0;
+      countPM = 0;
+    }
+    var hours = dayDate.getHours();
+    hours >= 12 ? countPM++ : countAM++;
+  });
+  return alertsPerDayArray;
+}
+
+const areDatesDifferent = (date1, date2) => {
+  return (
+    date1.getDate() !== date2.getDate() ||
+    date1.getMonth() !== date2.getMonth() ||
+    date1.getFullYear() !== date2.getFullYear()
+  );
 }
