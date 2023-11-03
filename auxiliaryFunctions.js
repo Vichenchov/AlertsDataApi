@@ -55,14 +55,14 @@ exports.countAlertsPerDay = cityAlerts => {
     if (areDatesDifferent(currentAlertDay, dayDate)) {
       alertsPerDayArray.push({
         date: dayDate.getDate() +'/' + dayDate.getMonth(),
-        amCount: countAM,
-        pmCount: countPM,
+        countAM: countAM,
+        countPM: countPM,
         total: countAM + countPM
       });
-      dayDate = currentAlertDay;
       countAM = 0;
       countPM = 0;
     }
+    dayDate = currentAlertDay;
     var hours = dayDate.getHours();
     hours >= 12 ? countPM++ : countAM++;
   });
