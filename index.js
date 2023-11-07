@@ -27,22 +27,6 @@ app.get("/Alerts", async (req, res) => {
     }
 });
 
-app.get('/Alerts/24', async (req, res) => {
-    try {
-        const previousDay = new Date();
-        previousDay.setDate(previousDay.getDate() - 1);
-        const lastDayAlerts = await AlertModel.find({
-            time: {
-                $gte: previousDay
-            }
-        });
-        res.json(lastDayAlerts); // Sending the response inside the try block
-    } catch (error) {
-        console.error('Error fetching documents:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
 app.get('/Alerts/cities', async (req, res) => {
     try {
         const Alerts = await AlertModel.find();
@@ -67,6 +51,66 @@ app.get('/Alerts/:city', async (req, res) => {
             city: city
         });
         res.json(cityAlerts);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/Alerts/:city/last24', async (req, res) => {
+    const {
+        city
+    } = req.params;
+    let cityAlerts = [];
+    try {
+        const previousDay = new Date();
+        previousDay.setDate(previousDay.getDate() - 1);
+        if (city !== 'ישראל') {
+            cityAlerts = await AlertModel.find({
+                time: {
+                    $gte: previousDay
+                },
+                city: city
+            }).sort({
+                time: -1
+            });
+        } else {
+            cityAlerts = await AlertModel.find({
+                time: {
+                    $gte: previousDay
+                }
+            }).sort({
+                time : -1
+            });
+        }
+        const formatedAlerts = af.formatAlertsTime(cityAlerts);
+        res.json(formatedAlerts);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/Alerts/:city/quarters', async (req, res) => {
+    const {
+        city
+    } = req.params;
+    let cityAlerts = [];
+    try {
+        if (city !== 'ישראל') {
+            cityAlerts = await AlertModel.find({
+                city: city
+            }).sort({
+                time: 1
+            });
+            console.log(cityAlerts);
+        } else {
+            cityAlerts = await AlertModel.find().sort({
+                time: 1
+            });
+        }
+        const alertsByDay = af.quarters(cityAlerts);
+        res.json(alertsByDay);
     } catch (error) {
         console.error('Error fetching documents:', error);
         res.status(500).send('Internal Server Error');

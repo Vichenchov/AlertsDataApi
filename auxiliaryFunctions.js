@@ -54,7 +54,7 @@ exports.countAlertsPerDay = cityAlerts => {
     let currentAlertDay = alert.time;
     if (areDatesDifferent(currentAlertDay, dayDate)) {
       alertsPerDayArray.push({
-        date: dayDate.getDate() +'/' + dayDate.getMonth(),
+        date: dayDate.getDate() + '/' + dayDate.getMonth(),
         countAM: countAM,
         countPM: countPM,
         total: countAM + countPM
@@ -75,4 +75,56 @@ const areDatesDifferent = (date1, date2) => {
     date1.getMonth() !== date2.getMonth() ||
     date1.getFullYear() !== date2.getFullYear()
   );
+}
+
+exports.quarters = alerts => {
+  let am1 = 0
+  let am2 = 0
+  let pm1 = 0
+  let pm2 = 0
+
+  alerts.forEach(alert => {
+    if (alert.time.getHours() >= 0 && alert.time.getHours() < 6) {
+      am1++;
+    } else {
+      if (alert.time.getHours() >= 6 && alert.time.getHours() < 12) {
+        am2++;
+      } else {
+        if (alert.time.getHours() >= 12 && alert.time.getHours() < 18) {
+          pm1++;
+        } else {
+          pm2++;
+        }
+      }
+    }
+  });
+
+  return {
+    am1: am1,
+    am2: am2,
+    pm1: pm1,
+    pm2: pm2
+  };
+}
+
+exports.formatAlertsTime = (alerts) => {
+  const formatedTime = alerts.map((alert) => {
+    return {
+      city: alert.city,
+      time: timeFormat(alert.time)
+    }
+  })
+  return formatedTime;
+}
+
+const timeFormat = (time) => {
+  let dd = time.getDate();
+  let mm = time.getMonth();
+  let yy = time.getFullYear();
+  let h = time.getHours();
+  let min = time.getMinutes();
+  return {
+    date: dd + "/" + mm + "/" + yy,
+    hour: h + ":" + (min < 10 ? "0" + min : min)
+  }
 }
