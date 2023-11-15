@@ -84,7 +84,8 @@ app.get('/Alerts/:city/last24', async (req, res) => {
             });
         }
         const formatedAlerts = af.formatAlertsTime(cityAlerts);
-        res.json(formatedAlerts);
+        res.json(formatedAlerts 
+            );
     } catch (error) {
         console.error('Error fetching documents:', error);
         res.status(500).send('Internal Server Error');
