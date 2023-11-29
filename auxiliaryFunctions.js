@@ -66,6 +66,14 @@ exports.countAlertsPerDay = cityAlerts => {
     var hours = dayDate.getHours();
     hours >= 12 ? countPM++ : countAM++;
   });
+
+  alertsPerDayArray.push({
+    date: dayDate.getDate() + '/' + dayDate.getMonth(),
+    countAM: countAM,
+    countPM: countPM,
+    total: countAM + countPM
+  });
+  
   return alertsPerDayArray;
 }
 
