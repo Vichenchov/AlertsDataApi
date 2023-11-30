@@ -54,7 +54,7 @@ exports.countAlertsPerDay = cityAlerts => {
     let currentAlertDay = alert.time;
     if (areDatesDifferent(currentAlertDay, dayDate)) {
       alertsPerDayArray.push({
-        date: dayDate.getDate() + '/' + dayDate.getMonth(),
+        date: dayDate.getDate() + '/' + (dayDate.getMonth() + 1),
         countAM: countAM,
         countPM: countPM,
         total: countAM + countPM
@@ -68,7 +68,7 @@ exports.countAlertsPerDay = cityAlerts => {
   });
 
   alertsPerDayArray.push({
-    date: dayDate.getDate() + '/' + dayDate.getMonth(),
+    date: dayDate.getDate() + '/' + (dayDate.getMonth() + 1),
     countAM: countAM,
     countPM: countPM,
     total: countAM + countPM

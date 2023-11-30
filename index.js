@@ -2,20 +2,36 @@ const express = require('express')
 const mongoose = require("mongoose")
 const cors = require('cors')
 require('dotenv').config();
+const rateLimit = require('express-rate-limit');
 
 const app = express()
 const port = process.env.PORT || 3001;
 const url = process.env.CONNECTION_STRING_MONGODB_ATLAS;
+const clientServer = process.env.CLIENT_SERVER;
 
 const dbFunctions = require('./db_functions');
 const af = require('./auxiliaryFunctions');
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: clientServer,
+    methods: 'GET,POST',
+    optionsSuccessStatus: 200
+  }));
+
 app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'public, max-age=300');
     next();
 });
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes - the time frame for which requests are checked
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+  });
+
+  
+app.use(limiter);
 
 app.get("/Alerts", async (req, res) => {
     try {
