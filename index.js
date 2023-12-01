@@ -42,6 +42,10 @@ const limiter = rateLimit({
   
 app.use(limiter);
 
+app.get('/', function (req, res) {
+    res.status(200).send('Fuck Hamas!');
+  });
+
 app.get("/Alerts", async (req, res) => {
     try {
         const Alerts = await dbFunctions.getAllAlerts();
