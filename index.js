@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 const cors = require('cors')
 require('dotenv').config();
 const rateLimit = require('express-rate-limit');
+const { getClientIp } = require('request-ip');
 
 const app = express()
 const port = process.env.PORT || 3001;
@@ -11,6 +12,11 @@ const clientServer = process.env.CLIENT_SERVER;
 
 const dbFunctions = require('./db_functions');
 const af = require('./auxiliaryFunctions');
+
+const getClientIPAddress = (req) => {
+    const ip = getClientIp(req)
+    return ip;
+  };
 
 app.use(express.json());
 app.use(cors({
@@ -24,12 +30,13 @@ app.use((req, res, next) => {
     next();
 });
 
-app.set('trust proxy', true);
-
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes - the time frame for which requests are checked
     max: 100, // limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again later.',
+    keyGenerator: (req, res) => {
+        return getClientIPAddress(req);
+      },
   });
 
   
