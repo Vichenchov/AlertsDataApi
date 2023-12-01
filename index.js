@@ -24,6 +24,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.set('trust proxy', true);
+
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes - the time frame for which requests are checked
     max: 100, // limit each IP to 100 requests per windowMs
